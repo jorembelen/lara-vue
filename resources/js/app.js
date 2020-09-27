@@ -12,6 +12,17 @@ import moment from 'moment';
 import { values } from 'lodash';
 import { Form, HasError, AlertError } from 'vform';
 
+import swal from 'sweetalert2'
+window.swal = swal;
+
+const toast = swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
+
+window.toast = toast;
 
 window.form = Form;
 Vue.component(HasError.name, HasError)
@@ -45,6 +56,10 @@ Vue.filter('upText', function(text){
 Vue.filter('myDate', function(created){
     return moment(created).format('MMMM Do YYYY');
 });
+
+
+window.Fire = new Vue();
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
