@@ -8,7 +8,7 @@
                 <h3 class="card-title">Users List</h3>
 
                 <div class="card-tools">
-                 <button class="btn btn-success" data-toggle="modal" data-target="#addNew"> Add New <i class="fa fa-user-plus fa-fw"></i></button>
+                 <button class="btn btn-success" @click="newModal"> Add New <i class="fa fa-user-plus fa-fw"></i></button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -32,7 +32,7 @@
                        <td>{{user.type | upText}}</td>
                        <td>{{user.created_at | myDate}}</td>
                       <td>
-                          <a href="http://">
+                          <a href="http://" @click.prevent="editModal(user)">
                             <i class="fa fa-edit blue"></i>
                           </a>
                           /
@@ -56,13 +56,14 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addNewLabel">Add New</h5>
+        <h5 v-show="editmode" class="modal-title" id="addNewLabel">Update User's Info</h5>
+        <h5 v-show="!editmode" class="modal-title" id="addNewLabel">Add New</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       
-        <form @submit.prevent="createUser" method="post">
+        <form @submit.prevent="editmode ? updateUser() : createUser()">
         <div class="modal-body">
           <div class="form-group">
               <input v-model="form.name" type="text" name="name"
@@ -101,7 +102,8 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Create</button>
+          <button v-show="editmode" type="submit" class="btn btn-primary">Update</button>
+          <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </form>
@@ -119,8 +121,10 @@ import Form from 'vform';
     export default {
         data() {
             return {
+                editmode: false,
                 users: {},
                 form: new Form({
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
@@ -131,6 +135,40 @@ import Form from 'vform';
             }
         },
         methods: {
+          updateUser() {
+            this.$Progress.start();
+            // console.log('Editing Data');
+            this.form.put('api/user/'+this.form.id)
+            .then(() => {
+              // success
+              $('#addNew').modal('hide');
+               swal.fire(
+                    'Updated!',
+                    'User has been updated successfully!.',
+                    'success'
+                    )
+              this.$Progress.finish();
+              Fire.$emit('AfterCreate');
+            })
+            .catch(() => {
+              this.$Progress.start();
+            });
+
+          },
+
+          editModal(user) {
+            this.editmode = true;
+            this.form.reset();
+            $('#addNew').modal('show');
+            this.form.fill(user);
+          },
+
+          newModal() {
+            this.editmode = false;
+            this.form.reset();
+            $('#addNew').modal('show');
+          },
+
           deleteUser(id){
             swal.fire({
               title: 'Are you sure?',
