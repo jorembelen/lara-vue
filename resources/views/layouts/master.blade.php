@@ -32,16 +32,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
+    <forms class="form-inline ml-3">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control form-control-navbar" @keyup="searchit" type="search" v-model="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
+          <button class="btn btn-navbar" @click="search">
             <i class="fas fa-search"></i>
           </button>
         </div>
       </div>
-    </form>
+    </forms>
 
    
   </nav>
@@ -61,10 +61,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{ asset('/img/profile.png') }}" class="img-circle elevation-2" alt="User Image">
+        @if(auth()->user()->photo)
+          <img src="./img/profile/{{ auth()->user()->photo }}" class="img-circle elevation-2" alt="User Image">
+        @else
+        <img src="./img/profile.png" class="img-circle elevation-2" alt="User Image">
+        @endif
         </div>
         <div class="info">
-          <a href="#" class="d-block"> {{ auth()->user()->name }} </a>
+          <a href="#" class="d-block"> 
+            {{ auth()->user()->name }} 
+          <span class="d-block text-muted">
+            {{ Auth::user()->type }}
+        </span>
+          </a>
         </div>
       </div>
 
@@ -84,7 +93,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </li>
 
        
-
+      @can('isAdmin')
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-cog green"></i>
@@ -103,6 +112,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul>
           </li>
        
+        <li class="nav-item">
+            <router-link to="/developer" class="nav-link"  active-class="active" exact>
+            <i class="nav-icon fas fa-cogs"></i>
+                <p>
+                    Developer
+                </p>
+            </router-link>
+        </li>
+        @endcan
         <li class="nav-item">
             <router-link to="/profile" class="nav-link"  active-class="active" exact>
             <i class="nav-icon fas fa-user yellow"></i>
@@ -174,6 +192,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </footer>
 </div>
 <!-- ./wrapper -->
+
+@auth
+  <script>
+    window.user = @json(auth()->user())
+  </script>
+@endauth
+
 
 <!-- REQUIRED SCRIPTS -->
 <script src="/js/app.js"></script>

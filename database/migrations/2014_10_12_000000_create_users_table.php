@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('type')->default('user');
             $table->string('bio')->nullable();
-            $table->string('photo')->default('profile.png');
+            $table->string('photo')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

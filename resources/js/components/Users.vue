@@ -2,7 +2,7 @@
     <div class="container">
         
         <div class="row mt-5">
-          <div class="col-md-12">
+          <div class="col-md-12" v-if="$gate.isAdminOrAuthor()">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Users List</h3>
@@ -25,7 +25,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="user in users" :key="user.id">
+                    <tr v-for="user in users.data" :key="user.id">
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
@@ -46,11 +46,20 @@
                 </table>
               </div>
               <!-- /.card-body -->
+
+            <div class="card-footer">
+              <pagination :data="users" 
+              @pagination-change-page="getResults"></pagination>
+            </div>
+
             </div>
             <!-- /.card -->
           </div>
         </div>
 
+      <div v-if="!$gate.isAdminOrAuthor()">
+        <not-found></not-found>
+      </div>
 <!-- Modal -->
 <div class="modal fade" id="addNew" tabindex="-1" aria-labelledby="addNewLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -135,6 +144,13 @@ import Form from 'vform';
             }
         },
         methods: {
+          getResults(page = 1) {
+            axios.get('api/user?page=' + page)
+              .then(response => {
+                this.users = response.data;
+              });
+          },
+
           updateUser() {
             this.$Progress.start();
             // console.log('Editing Data');
@@ -197,7 +213,9 @@ import Form from 'vform';
             },
 
           loadUsers(){
-            axios.get('api/user').then(({data}) => (this.users = data.data));
+            if(this.$gate.isAdminOrAuthor()){
+              axios.get('api/user').then(({data}) => (this.users = data));
+            }
           },
 
           createUser(){
@@ -217,6 +235,16 @@ import Form from 'vform';
             }
         },
         created() {
+            Fire.$on('searching', () => {
+              let query = this.$parent.search;
+              axios.get('api/findUser?q=' + query)
+              .then((data) =>{
+                this.users = data.data
+              })
+              .catch(() =>{
+
+              })
+            })
             this.loadUsers();
               Fire.$on('AfterCreate',() => {
                this.loadUsers();
