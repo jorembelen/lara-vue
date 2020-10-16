@@ -17,7 +17,7 @@
 
              <div class="card card-widget widget-user">
               <!-- Add the bg color to the header using any of the bg-* classes -->
-              <div class="widget-user-header text-white" style="background: url('./img/user-cover.jpg') center center;">
+              <div class="widget-user-header text-white" style="background: url('./img/background.jpg') center center;">
                 <h3 class="widget-user-username text-left">{{ this.form.name }}</h3>
                 <h5 class="widget-user-desc text-left">{{ this.form.type| upText }}</h5>
               </div>
@@ -149,7 +149,7 @@ import Form from 'vform';
     export default {
         data() {
             return {
-                form: new Form({
+                form: new form({
                     id: '',
                     name: '',
                     email: '',

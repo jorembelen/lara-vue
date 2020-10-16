@@ -12,9 +12,15 @@ import moment from 'moment';
 import { values } from 'lodash';
 import { Form, HasError, AlertError } from 'vform';
 
+window.form = Form;
+Vue.component(HasError.name, HasError)
+Vue.component(AlertError.name, AlertError)
+
 // This is for middleware
 import Gate from "./Gate";
 Vue.prototype.$gate = new Gate(window.user);
+
+
 
 import swal from 'sweetalert2'
 window.swal = swal;
@@ -28,9 +34,6 @@ const toast = swal.mixin({
 
 window.toast = toast;
 
-window.form = Form;
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
 
 Vue.component('pagination', require('laravel-vue-pagination'));
 
